@@ -27,11 +27,15 @@ To use this boilerplate, you will need a Cloudflare account and an active Worker
    ```
    npm install -g @cloudflare/wrangler
    ```
-3. Log in to your Cloudflare account:
+3. Install the required packages:
+   ```
+   npm i
+   ```
+4. Log in to your Cloudflare account:
    ```
    wrangler login
    ```
-4. Run the command:
+5. Run the command:
 
    ```
    wrangler kv:namespace create <namespace_name>
@@ -40,7 +44,7 @@ To use this boilerplate, you will need a Cloudflare account and an active Worker
 
    where `<namespace_name>` is the name you want to give your KV store.
 
-5. Adjust deployment configuration accordingly in `wrangler.toml`
+6. Adjust deployment configuration accordingly in `wrangler.toml`
 
    ```toml
    name = "example"
@@ -60,9 +64,9 @@ To use this boilerplate, you will need a Cloudflare account and an active Worker
    crons = ["* * * * *"]
    ```
 
-6. Add CRON Trigger from your Cloudflare Dashboard in `Workers > Services > Triggers > Cron Triggers`.
+7. Add CRON Trigger from your Cloudflare Dashboard in `Workers > Services > Triggers > Cron Triggers`.
 
-7. Deploy the worker:
+8. Deploy the worker:
 
    ```
    wrangler publish
