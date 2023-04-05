@@ -1,0 +1,13 @@
+name = "cloudflare-worker-boilerplate"
+main = "src/index.ts"
+compatibility_date = "2023-03-10"
+
+# Put your generated id from wrangler here
+kv_namespaces = [{ binding = "KV_KEYVALUE", preview_id = "$PREVIEW_ID", id = "$PRODUCTION_ID" }]
+
+[vars]
+# Put your secret variable name here as to not forget about them
+# - API_KEY
+
+[triggers]
+crons = "0 7 * * *"
