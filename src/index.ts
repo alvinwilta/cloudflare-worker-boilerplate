@@ -2,6 +2,10 @@ import { configuration } from "./configuration";
 import { handleRequest, handleOptions, handleSchedule } from "./handler";
 
 export interface Env {
+  /**
+   * IF you defined more env on .dev.vars or .env, don't forget to update this interface
+   */
+  // API_KEY: string;
   KV_KEYVALUE: KVNamespace;
 }
 
