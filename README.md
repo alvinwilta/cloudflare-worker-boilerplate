@@ -35,6 +35,7 @@ To use this boilerplate, you will need a Cloudflare account and an active Worker
 
    ```
    wrangler kv:namespace create <namespace_name>
+   wrangler kv:namespace create --preview <namespace_name>
    ```
 
    where `<namespace_name>` is the name you want to give your KV store.
@@ -43,7 +44,7 @@ To use this boilerplate, you will need a Cloudflare account and an active Worker
 
    ```toml
    name = "example"
-   main = ""src/index.ts"
+   main = "src/index.ts"
    compatibility_date = "2023-03-10"
    account_id = "$CLOUDFLARE_ACCOUNT_ID"
    route = "$APP_HOSTNAME"
@@ -56,7 +57,7 @@ To use this boilerplate, you will need a Cloudflare account and an active Worker
 
    # Optional
    [triggers]
-   crons = "* * * * *"
+   crons = ["* * * * *"]
    ```
 
 6. Add CRON Trigger from your Cloudflare Dashboard in `Workers > Services > Triggers > Cron Triggers`.
@@ -84,4 +85,4 @@ Anyone and everyone is welcome to contribute. You can start by checking out the 
 
 ## License
 
-Copyright © 2023-present Alvin Wilta. This source code is licensed under the MIT license found in the [LICENSE](https://github.com/alvinwilta/cloudflare-worker-boilerplate/blob/main/LICENSE) file.
+Copyright © 2023-present by Alvin Wilta. This source code is licensed under the MIT license found in the [LICENSE](https://github.com/alvinwilta/cloudflare-worker-boilerplate/blob/main/LICENSE) file.

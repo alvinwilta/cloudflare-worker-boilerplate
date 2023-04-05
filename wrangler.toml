@@ -10,4 +10,4 @@ kv_namespaces = [{ binding = "KV_KEYVALUE", preview_id = "$PREVIEW_ID", id = "$P
 # - API_KEY
 
 [triggers]
-crons = "0 7 * * *"
+crons = ["0 7 * * *"]
