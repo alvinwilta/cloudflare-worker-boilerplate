@@ -26,6 +26,7 @@ export async function getDummy(env: Env): Promise<Response> {
     return new Response(JSON.stringify(discountedProducts), {
       status: 200,
       statusText: "Successfully fetched dummy",
+      headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
     console.error(err);
@@ -66,5 +67,10 @@ async function gatherResponse<T>(response: Response): Promise<T> {
   if (contentType.includes("application/json")) {
     return await response.json();
   }
-  return JSON.parse(await response.text());
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`Unexpected non-JSON response: ${text.slice(0, 200)}`);
+  }
 }

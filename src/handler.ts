@@ -5,36 +5,22 @@ import { updateKeyValue } from "./routes/keyvalue.route";
 
 export async function handleRequest(
   request: Request,
-  env: Env
+  env: Env,
 ): Promise<Response> {
   const requestURL = new URL(request.url);
   const requestPath = requestURL.pathname;
 
-  //* Check target URL validity
-  if (
-    configuration.methods &&
-    !configuration.methods.includes(request.method)
-  ) {
-    return new Response(null, {
-      status: 405,
-      statusText: "Method not allowed",
-    });
-  }
+  // TODO: check for user-agent specific logic
+  const user_agent = request.headers.get("user-agent");
+  const is_mobile = isMobileUpstream(user_agent);
 
-  //* Check for mobile url
-  // const user_agent = request.headers.get("user-agent");
-  // const is_mobile = isMobileUpstream(user_agent);
-
-  /*
-   * Handle Worker's URL Path
-   * If you want to manage various URL path for your worker
-   */
   switch (requestPath) {
     // TODO: Manage request path here, add additional condition for mobile if necessary.
     case list_api.home:
       return new Response(JSON.stringify({ msg: "Server up and running" }), {
         status: 200,
         statusText: "Server up and running",
+        headers: { "Content-Type": "application/json" },
       });
     case list_api.dummy:
       return getDummy(env);
@@ -91,36 +77,18 @@ export async function handleOptions(request: Request): Promise<Response> {
  */
 export async function handleSchedule(
   event: ScheduledEvent,
-  env: Env
-): Promise<Response> {
-  const cron = parseCron(event.cron);
-
+  env: Env,
+): Promise<void> {
   /*
    * Handling specific event to trigger for a CRON trigger
+   * Only use this if you need specific event to trigger for different CRON schedule
    */
-  if (cron === "0 7 * * *") {
+  if (event.cron === "0 7 * * *") {
     console.log("cron triggered!");
-    return updateKeyValue(env);
+    await updateKeyValue(env);
+    return;
   }
   console.log("no event triggered");
-  return new Response(null, {
-    status: 500,
-    statusText: "Internal server error, cron not detected",
-  });
-}
-
-/**
- * Normalize CRON string
- * @param cron
- * @returns {string}
- */
-function parseCron(cron: string): string {
-  cron = cron.replaceAll("/", "");
-  if (cron.length > 9) {
-    cron = cron.substring(cron.length - 9);
-  }
-  cron = cron.replaceAll("+", " ");
-  return cron;
 }
 
 /**
@@ -139,7 +107,7 @@ function isMobileUpstream(user_agent: string | null): boolean {
   ];
   if (user_agent !== null && user_agent !== undefined) {
     for (const element of agents) {
-      if (user_agent.indexOf(element) > 0) {
+      if (user_agent.indexOf(element) >= 0) {
         return true;
       }
     }
