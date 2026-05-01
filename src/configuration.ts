@@ -1,8 +1,6 @@
 export const configuration = {
-  //   host: '*',
-  // * For CORS
+  // TODO: Update host before deploying — controls Access-Control-Allow-Origin
   host: "https://example.com",
-  referer: "https://example.com",
   methods: ["GET", "HEAD", "POST", "OPTIONS", "PATCH"],
 };
 

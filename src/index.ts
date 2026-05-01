@@ -19,17 +19,21 @@ export default {
         statusText: "Method Not Allowed",
       });
 
-    if (request.method === "OPTIONS") {
-      return handleOptions(request);
-    } else {
-      return handleRequest(request, env);
-    }
+    const response =
+      request.method === "OPTIONS"
+        ? await handleOptions(request)
+        : await handleRequest(request, env);
+
+    // Attach CORS header to every response
+    const headers = new Headers(response.headers);
+    headers.set("Access-Control-Allow-Origin", configuration.host);
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   },
-  async scheduled(
-    event: ScheduledEvent,
-    env: Env,
-    ctx: EventContext<Env, any, any>
-  ) {
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(handleSchedule(event, env));
   },
 };
