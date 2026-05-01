@@ -1,6 +1,6 @@
 name = "cloudflare-worker-boilerplate"
 main = "src/index.ts"
-compatibility_date = "2023-03-10"
+compatibility_date = "2026-01-01"
 
 # Put your generated id from wrangler here
 kv_namespaces = [{ binding = "KV_KEYVALUE", preview_id = "$PREVIEW_ID", id = "$PRODUCTION_ID" }]
