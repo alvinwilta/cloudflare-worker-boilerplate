@@ -13,75 +13,72 @@ A boilerplate for Cloudflare's Edge Worker with request handler and CRON-trigger
 
 ### CRON Trigger Handler
 
-Setting a `0 7 * * *` CRON Trigger in Cloudflare's Dashboard will use Cloudflare's KV storage to store and retrieve current time.
+Setting a `0 7 * * *` CRON trigger will use Cloudflare's KV storage to store and retrieve the current time.
 
 ## Usage
 
 To use this boilerplate, you will need a Cloudflare account and an active Workers subscription. Follow these steps to deploy the worker:
 
 1. Clone the repository:
+
    ```
    git clone https://github.com/alvinwilta/cloudflare-worker-boilerplate.git
    ```
-2. Install the Cloudflare Workers CLI:
+
+2. Install the required packages:
+
    ```
-   npm install -g @cloudflare/wrangler
+   npm install
    ```
-3. Install the required packages:
-   ```
-   npm i
-   ```
-4. Log in to your Cloudflare account:
+
+3. Log in to your Cloudflare account:
+
    ```
    wrangler login
    ```
-5. Run the command:
+
+4. Create KV namespaces:
 
    ```
-   wrangler kv:namespace create <namespace_name>
-   wrangler kv:namespace create --preview <namespace_name>
+   wrangler kv namespace create <namespace_name>
+   wrangler kv namespace create --preview <namespace_name>
    ```
 
-   where `<namespace_name>` is the name you want to give your KV store.
+5. Update `wrangler.jsonc` with your KV namespace IDs and worker name:
 
-6. Adjust deployment configuration accordingly in `wrangler.toml`
-
-   ```toml
-   name = "example"
-   main = "src/index.ts"
-   compatibility_date = "2023-03-10"
-   account_id = "$CLOUDFLARE_ACCOUNT_ID"
-   route = "$APP_HOSTNAME"
-   # Put your generated KV id here
-   kv_namespaces = [{ binding = "$KV_NAME", preview_id = "$PREVIEW_ID", id = "$PRODUCTION_ID" }]
-
-   [vars]
-   APP_ENV = "$APP_ENV"
-   APP_HOSTNAME = "$APP_HOSTNAME"
-
-   # Optional
-   [triggers]
-   crons = ["* * * * *"]
+   ```jsonc
+   {
+     "name": "your-worker-name",
+     "kv_namespaces": [
+       {
+         "binding": "KV_KEYVALUE",
+         "preview_id": "<preview_id>",
+         "id": "<production_id>",
+       },
+     ],
+   }
    ```
 
-7. Add CRON Trigger from your Cloudflare Dashboard in `Workers > Services > Triggers > Cron Triggers`.
+6. Update `allowedOrigins` in [`src/configuration.ts`](./src/configuration.ts) with your allowed origins.
+
+7. Copy `.dev.vars.example` to `.dev.vars` and fill in any required secrets for local development.
 
 8. Deploy the worker:
-
    ```
-   wrangler publish
+   wrangler deploy
    ```
 
 ## File Descriptions
 
-- `interfaces/`: interface definitions used in this project.
-- `routes/`: route services that are invoked for each API request.
-- [`configuration.ts`](./src/configuration.ts): define all API requests provided by the worker.
-- [`handler.ts`](./src/handler.ts): handle request, option request for [CORS Preflight](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request), and scheduled request.
-- [`index.test.ts`](./src/index.test.ts): unit test powered by [Vitest](https://vitejs.dev/).
-- [`wrangler.toml`](./wrangler.toml): configuration file for [Wrangler](https://developers.cloudflare.com/workers/wrangler/) to run and publish the worker.
-- [`tsconfig.json`](./tsconfig.json): [Typescript](https://www.typescriptlang.org/) configuration file.
-- `.dev.vars.example`: wrangler env file for local development.
+- `src/interfaces/`: TypeScript interface definitions.
+- `src/routes/`: Route handlers invoked for each API request.
+- [`src/configuration.ts`](./src/configuration.ts): Allowed origins, HTTP methods, and API path definitions.
+- [`src/handler.ts`](./src/handler.ts): Request routing, [CORS preflight](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request) handling, and scheduled event handler.
+- [`src/index.ts`](./src/index.ts): Worker entry point. Validates methods, attaches CORS headers, and dispatches to handlers.
+- [`src/index.test.ts`](./src/index.test.ts): Unit tests powered by [Vitest](https://vitejs.dev/).
+- [`wrangler.jsonc`](./wrangler.jsonc): Configuration for [Wrangler](https://developers.cloudflare.com/workers/wrangler/) — KV bindings, cron triggers, observability.
+- [`tsconfig.json`](./tsconfig.json): TypeScript configuration.
+- `.dev.vars.example`: Template for local development secrets.
 
 ## Contributing
 
