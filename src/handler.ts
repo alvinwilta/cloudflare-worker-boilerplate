@@ -27,15 +27,14 @@ export async function handleRequest(
     case list_api.keyvalue:
       return updateKeyValue(env);
     case list_api.pages:
-      return new Response(null, {
+      return new Response(JSON.stringify({ error: "Not yet implemented" }), {
         status: 404,
-        statusText: "Not yet implemented",
+        headers: { "Content-Type": "application/json" },
       });
     default:
-      // * You can return a HTML body for a 404 page
-      return new Response(null, {
+      return new Response(JSON.stringify({ error: "Not found" }), {
         status: 404,
-        statusText: "Request path url not defined",
+        headers: { "Content-Type": "application/json" },
       });
   }
 }
@@ -45,16 +44,19 @@ export async function handleOptions(request: Request): Promise<Response> {
    * Handle CORS pre-flight request.
    * If you want to check the requested method + headers you can do that here.
    */
+  const origin = request.headers.get("Origin");
   if (
-    request.headers.get("Origin") !== null &&
+    origin !== null &&
     request.headers.get("Access-Control-Request-Method") !== null &&
     request.headers.get("Access-Control-Request-Headers") !== null
   ) {
+    const isAllowed = configuration.allowedOrigins.includes(origin);
     return new Response(null, {
       headers: {
-        "Access-Control-Allow-Origin": configuration.host,
+        ...(isAllowed && { "Access-Control-Allow-Origin": origin }),
         "Access-Control-Allow-Methods": configuration.methods.join(", "),
         "Access-Control-Allow-Headers": "Content-Type",
+        "Vary": "Origin",
       },
     });
 

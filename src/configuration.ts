@@ -1,6 +1,6 @@
 export const configuration = {
-  // TODO: Update host before deploying — controls Access-Control-Allow-Origin
-  host: "https://example.com",
+  // TODO: Update allowedOrigins before deploying — controls Access-Control-Allow-Origin
+  allowedOrigins: ["https://example.com"],
   methods: ["GET", "HEAD", "POST", "OPTIONS", "PATCH"],
 };
 

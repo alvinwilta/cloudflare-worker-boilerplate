@@ -14,9 +14,9 @@ export default {
     const isMethodAllowed = configuration.methods.includes(request.method);
 
     if (!isMethodAllowed)
-      return new Response(null, {
+      return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
         status: 405,
-        statusText: "Method Not Allowed",
+        headers: { "Content-Type": "application/json" },
       });
 
     const response =
@@ -24,9 +24,12 @@ export default {
         ? await handleOptions(request)
         : await handleRequest(request, env);
 
-    // Attach CORS header to every response
     const headers = new Headers(response.headers);
-    headers.set("Access-Control-Allow-Origin", configuration.host);
+    const origin = request.headers.get("Origin");
+    if (origin && configuration.allowedOrigins.includes(origin)) {
+      headers.set("Access-Control-Allow-Origin", origin);
+    }
+    headers.set("Vary", "Origin");
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,
